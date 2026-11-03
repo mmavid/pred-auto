@@ -9,31 +9,33 @@
 </head>
 
 <body>
-
     <section class="block-1">
         <section class="section-1">
             <form id="form_1" class="form-pass">
                 <h1>Регистрация</h1>
-                <!-- <input type="login" placeholder="Логин" id="login">
-                    <input type="password" placeholder="пароль" id="password"> -->
-
-
                 <input type="marka" placeholder="marka" id="marka">
                 <input type="model" placeholder="model" id="model">
                 <input type="god" placeholder="god" id="god">
                 <input type="price" placeholder="price" id="price">
-
-
-
                 <button type="submit">Зарегистрироваться</button>
             </form>
 
-            <form id="form_2" class="form-pass-2">
+            <form id="registerForm" class="form-pass-2">
+                <h1>Регистрация</h1>
+                <input type="email" placeholder="Логин" id="registerEmail">
+                <input type="text" placeholder="Телефон (+7 999 123-45-67)" id="registerPhone">
+                <span id="phoneError" style="color: red; display: none; font-size: 12px;"></span>
+                <input type="password" placeholder="Пароль" id="registerPassword">
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+
+            <form id="loginForm" class="form-pass-2">\
                 <h1>Авторизация</h1>
-                <input type="login" placeholder="Логин" id="login">
-                <input type="password" placeholder="пароль" id="password">
+                <input type="email" placeholder="Логин" id="loginEmail">
+                <input type="password" placeholder="Пароль" id="loginPassword">
                 <button type="submit">Войти</button>
             </form>
+
         </section>
 
         <section class="section-2">
@@ -49,6 +51,7 @@
                         <button class="slider_btn slider_btn--next">Сюда</button>
                     </div>
                 </div>
+
                 <div class="buttons">
                     <div class="indicators">
                         <div class="k1"></div>
@@ -60,8 +63,8 @@
             </div>
         </section>
 
-        <script src="./api.js"></script>
         <script src="./slider.js"></script>
+        <script src="./api.js"></script>
     </section>
 </body>
 

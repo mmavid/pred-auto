@@ -1,10 +1,33 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const { Sequelize, DataTypes } = require('sequelize')
+
 const PORT = 3000
+const SECRET_KEY = 'super_secret_key'
 
 app.use(express.json())
 app.use(cors())
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './database.sqlite',
+    logging: false
+})
+
+const User = sequelize.define('User', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    email: { 
+        type: DataTypes.STRING, 
+        allowNull: false, 
+        unique: true,
+        validate: { isEmail: true } 
+    },
+    phone: { type: DataTypes.STRING, allowNull: false, unique: true },
+    password: { type: DataTypes.STRING, allowNull: false }
+}, { tableName: 'users', timestamps: false })
 
 const car_dealership = [
     { id: 1, marka: 'BMW', model: 'M5', god: 2026, price: 16700000, },
@@ -16,7 +39,6 @@ const car_dealership = [
     { id: 7, marka: 'BMW', model: 'M4', god: 2025, price: 13500000, },
     { id: 8, marka: 'Ford', model: 'Focus', god: 2016, price: 980000, }
 ]
-
 let nextId = 9
 
 app.get('/', (req, res) => {
@@ -40,6 +62,56 @@ app.post('/car', (req, res) => {
     return res.status(200).json({ message: 'Created' })
 })
 
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`)
+const authMiddleware = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Требуется авторизация' });
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+        req.user = jwt.verify(token, SECRET_KEY);
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: 'Невалидный токен' });
+    }
+}
+
+app.post('/author/register', async (req, res) => {
+    try {
+        const { email, phone, password } = req.body;
+        if (!email || !phone || !password) return res.status(400).json({ error: 'Все поля обязательны' });
+
+        const hash = await bcrypt.hash(password, 10);
+        const user = await User.create({ email, phone, password: hash });
+        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+
+        res.status(201).json({ token, user: { id: user.id, email: user.email, phone: user.phone } });
+    } catch (err) {
+        if (err.name === 'SequelizeValidationError') return res.status(400).json({ error: err.errors[0].message });
+        if (err.name === 'SequelizeUniqueConstraintError') return res.status(409).json({ error: 'Email или телефон заняты' });
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+})
+
+app.post('/author/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ where: { email } });
+        
+        if (!user) return res.status(401).json({ error: 'Неверный email или пароль' });
+        
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(401).json({ error: 'Неверный email или пароль' });
+
+        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+        res.json({ token, user: { id: user.id, email: user.email, phone: user.phone } });
+    } catch (err) {
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+})
+
+sequelize.sync().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Сервер запущен на http://localhost:${PORT}`)
+    })
 })
