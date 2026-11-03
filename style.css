@@ -142,12 +142,27 @@ body {
     margin-left: auto;
 }
 
+<<<<<<< HEAD
+=======
+
+/* слайдер */
+
+
+.window-with-data {
+    width: 100%;
+}
+
+>>>>>>> origin/master
 .slider {
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
+<<<<<<< HEAD
     margin: 20px auto;
+=======
+    margin: 100px auto 0;
+>>>>>>> origin/master
     width: 300px;
     background-color: rgb(230, 169, 95);
     border: 2px solid rgb(184, 117, 35);

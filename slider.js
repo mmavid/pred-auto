@@ -14,6 +14,7 @@ function goTo(index) {
     track.style.transform = `translateX(-${currentIndex * 100}%)`;
 }
 
+<<<<<<< HEAD
 document.querySelector('.slider_btn--prev').addEventListener('click', () => {
     goTo(currentIndex - 1);
     startAutoplay();
@@ -24,6 +25,8 @@ document.querySelector('.slider_btn--next').addEventListener('click', () => {
     startAutoplay();
 });
 
+=======
+>>>>>>> origin/master
 function startAutoplay() {
     stopAutoplay();
     autoplayId = setInterval(() => goTo(currentIndex + 1), AUTOPLAY_DELAY);
@@ -36,9 +39,27 @@ function stopAutoplay() {
     }
 }
 
+<<<<<<< HEAD
 slider.addEventListener('mouseenter', stopAutoplay);
 slider.addEventListener('mouseleave', startAutoplay);
 
+=======
+document.querySelector('.slider_btn--prev').addEventListener('click', () => {
+    goTo(currentIndex - 1);
+    startAutoplay();
+});
+
+document.querySelector('.slider_btn--next').addEventListener('click', () => {
+    goTo(currentIndex + 1);
+    startAutoplay();
+});
+
+
+slider.addEventListener('mouseenter', stopAutoplay);
+slider.addEventListener('mouseleave', startAutoplay);
+
+
+>>>>>>> origin/master
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         stopAutoplay();
@@ -47,4 +68,9 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
+<<<<<<< HEAD
 startAutoplay();
+=======
+
+startAutoplay();
+>>>>>>> origin/master
