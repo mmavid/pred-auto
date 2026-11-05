@@ -1,21 +1,21 @@
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const { Sequelize, DataTypes } = require('sequelize')
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { Sequelize, DataTypes } = require('sequelize');
 
-const PORT = 3000
-const SECRET_KEY = 'super_secret_key'
+const PORT = 3000;
+const SECRET_KEY = 'super_secret_key';
 
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: './database.sqlite',
     logging: false
-})
+});
 
 const User = sequelize.define('User', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -27,40 +27,40 @@ const User = sequelize.define('User', {
     },
     phone: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false }
-}, { tableName: 'users', timestamps: false })
+}, { tableName: 'users', timestamps: false });
 
 const car_dealership = [
-    { id: 1, marka: 'BMW', model: 'M5', god: 2026, price: 16700000, },
-    { id: 2, marka: 'Ford', model: 'Explorer', god: 2013, price: 1260000, },
-    { id: 3, marka: 'Mazda', model: 'RX7', god: 2002, price: 2800000, },
-    { id: 4, marka: 'Mercedes', model: 'CLS', god: 2016, price: 4600000, },
-    { id: 5, marka: 'LADA', model: 'Niva', god: 2026, price: 1700000, },
-    { id: 6, marka: 'Mercedes', model: 'E-Class', god: 2015, price: 2600000, },
-    { id: 7, marka: 'BMW', model: 'M4', god: 2025, price: 13500000, },
-    { id: 8, marka: 'Ford', model: 'Focus', god: 2016, price: 980000, }
-]
-let nextId = 9
+    { id: 1, marka: 'BMW', model: 'M5', god: 2026, price: 16700000 },
+    { id: 2, marka: 'Ford', model: 'Explorer', god: 2013, price: 1260000 },
+    { id: 3, marka: 'Mazda', model: 'RX7', god: 2002, price: 2800000 },
+    { id: 4, marka: 'Mercedes', model: 'CLS', god: 2016, price: 4600000 },
+    { id: 5, marka: 'LADA', model: 'Niva', god: 2026, price: 1700000 },
+    { id: 6, marka: 'Mercedes', model: 'E-Class', god: 2015, price: 2600000 },
+    { id: 7, marka: 'BMW', model: 'M4', god: 2025, price: 13500000 },
+    { id: 8, marka: 'Ford', model: 'Focus', god: 2016, price: 980000 }
+];
+let nextId = 9;
 
 app.get('/', (req, res) => {
-    return res.send(car_dealership)
-})
+    return res.send(car_dealership);
+});
 
 app.post('/car', (req, res) => {
     const { marka, model, god, price } = req.body;
     if (!marka || !model || !god || !price) {
-        throw new Error('данные не указаны')
+        return res.status(400).json({ error: 'данные не указаны' });
     }
     const newCar_dealership = {
         id: nextId++,
-        marka: marka,
-        model: model,
-        god: god,
-        price: price,
-    }
+        marka,
+        model,
+        god,
+        price
+    };
     car_dealership.push(newCar_dealership);
-    console.log(`авто добавлено`);
-    return res.status(200).json({ message: 'Created' })
-})
+    console.log('авто добавлено');
+    return res.status(200).json({ message: 'Created' });
+});
 
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -74,7 +74,7 @@ const authMiddleware = (req, res, next) => {
     } catch (err) {
         return res.status(401).json({ error: 'Невалидный токен' });
     }
-}
+};
 
 app.post('/author/register', async (req, res) => {
     try {
@@ -91,7 +91,7 @@ app.post('/author/register', async (req, res) => {
         if (err.name === 'SequelizeUniqueConstraintError') return res.status(409).json({ error: 'Email или телефон заняты' });
         res.status(500).json({ error: 'Ошибка сервера' });
     }
-})
+});
 
 app.post('/author/login', async (req, res) => {
     try {
@@ -105,13 +105,24 @@ app.post('/author/login', async (req, res) => {
 
         const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
         res.json({ token, user: { id: user.id, email: user.email, phone: user.phone } });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка сервера' })
+    }
+});
+
+app.get('/users', authMiddleware, async (req, res) => {
+    try {
+        const users = await User.findAll({
+            attributes: ['id', 'email', 'phone'] 
+        });
+        res.status(200).json(users);
     } catch (err) {
         res.status(500).json({ error: 'Ошибка сервера' });
     }
-})
+});
 
 sequelize.sync().then(() => {
     app.listen(PORT, () => {
-        console.log(`Сервер запущен на http://localhost:${PORT}`)
-    })
-})
+        console.log(`Сервер запущен на http://localhost:${PORT}`);
+    });
+});

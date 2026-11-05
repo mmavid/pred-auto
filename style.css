@@ -79,7 +79,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 950px;
-    height: 577px;
+    min-height: 577px; 
     background-color: rgb(230, 169, 95);
     border: 2px solid rgb(184, 117, 35);
     border-radius: 20px;
@@ -130,6 +130,7 @@ body {
     margin-bottom: 20px;
     border: 2px solid rgb(184, 117, 35);
     border-radius: 20px;
+    flex-grow: 1;
 }
 
 .all-cars button {
@@ -139,30 +140,14 @@ body {
     background-color: rgb(171, 108, 32);
     color: rgb(255, 255, 255);
     cursor: pointer;
-    margin-left: auto;
 }
 
-<<<<<<< HEAD
-=======
-
-/* слайдер */
-
-
-.window-with-data {
-    width: 100%;
-}
-
->>>>>>> origin/master
 .slider {
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
-<<<<<<< HEAD
-    margin: 20px auto;
-=======
     margin: 100px auto 0;
->>>>>>> origin/master
     width: 300px;
     background-color: rgb(230, 169, 95);
     border: 2px solid rgb(184, 117, 35);
@@ -200,10 +185,22 @@ body {
     padding: 6px 10px;
 }
 
+.slider_btn--next {
+    right: 8px;
+}
+
 .slider_btn--prev {
     left: 8px;
 }
 
-.slider_btn--next {
-    right: 8px;
+#usersOutput {
+    display: none; 
+    background: #fff; 
+    padding: 20px; 
+    border-radius: 10px; 
+    margin-top: 15px; 
+    text-align: left; 
+    overflow: auto;
+    max-height: 250px; 
+    border: 1px solid #ccc;
 }

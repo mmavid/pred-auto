@@ -13,10 +13,10 @@
         <section class="section-1">
             <form id="form_1" class="form-pass">
                 <h1>Регистрация</h1>
-                <input type="marka" placeholder="marka" id="marka">
-                <input type="model" placeholder="model" id="model">
-                <input type="god" placeholder="god" id="god">
-                <input type="price" placeholder="price" id="price">
+                <input type="text" placeholder="marka" id="marka">
+                <input type="text" placeholder="model" id="model">
+                <input type="text" placeholder="god" id="god">
+                <input type="text" placeholder="price" id="price">
                 <button type="submit">Зарегистрироваться</button>
             </form>
 
@@ -29,13 +29,12 @@
                 <button type="submit">Зарегистрироваться</button>
             </form>
 
-            <form id="loginForm" class="form-pass-2">\
+            <form id="loginForm" class="form-pass-2">
                 <h1>Авторизация</h1>
                 <input type="email" placeholder="Логин" id="loginEmail">
                 <input type="password" placeholder="Пароль" id="loginPassword">
                 <button type="submit">Войти</button>
             </form>
-
         </section>
 
         <section class="section-2">
@@ -58,14 +57,20 @@
                         <div class="k2"></div>
                         <div class="k3"></div>
                     </div>
-                    <button>Обновить</button>
+
+                    <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                        <span id="loadError" style="color: red; font-size: 14px;"></span>
+                        <button id="loadUsersBtn">Загрузить клиентов</button>
+                        <button id="logoutBtn">Выйти</button>
+                    </div>
                 </div>
+                
+                <pre id="usersOutput"></pre>
             </div>
         </section>
 
         <script src="./slider.js"></script>
-        <script src="./api.js"></script>
-        <script src="./slider.js"></script>
+        <script type="module" src="./api.js"></script>
     </section>
 </body>
 
