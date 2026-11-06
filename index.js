@@ -11,6 +11,11 @@ const SECRET_KEY = 'super_secret_key';
 app.use(express.json());
 app.use(cors());
 
+
+function generateETag(data) {
+  return crypto.createHash('md5').update(data).digest('hex');
+}
+
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: './database.sqlite',
@@ -44,6 +49,24 @@ let nextId = 9;
 app.get('/', (req, res) => {
     return res.send(car_dealership);
 });
+
+
+app.get('/cached', (req, res) => {
+
+  const etag = generateETag(JSON.stringify(car_dealership));
+  const lastModified = new Date().toUTCString();
+
+  // res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('ETag', etag);
+  res.setHeader('Last-Modified', lastModified);
+
+  if (req.headers['if-none-match'] === etag ||
+    req.headers['if-modified-since'] === lastModified) {
+    return res.status(304).end();
+  }
+  return res.send(car_dealership);
+})
+
 
 app.post('/car', (req, res) => {
     const { marka, model, god, price } = req.body;
